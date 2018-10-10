@@ -3,7 +3,7 @@ library(DT)
 library(data.table)
 library(tidyverse)
 
-# constants
+# constants from the sales/ customer/ sales rep dataset
 Endmonth=8
 INR_to_USD=71.84
 BRL_to_USD=4.11
