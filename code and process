@@ -18,35 +18,34 @@ SalesRepcostData= fread(input = "./Data/Hubspot- Sales Rep Cost Data.csv", verbo
 SalesRepcostData=data.table(SalesRepcostData)
 SalesData$Year=as.numeric(substr(SalesData$`Deal Close`,1,4))
 
-## Filter out Japan
+# data cleaning
+
+# Filter out Japan
 SalesData=SalesData[Country!='Japan']
 CustomerData=CustomerData[Country!='Japan']
 CustomerData=CustomerData[,1:7]
-## Filter out year!=2018
+# Filter out year!=2018
 SalesData=SalesData[Year==2018,]
-##Month
+# Format the Month
 SalesData$Deal_month=as.numeric(substr(SalesData$`Deal Close`,6,8))
 CustomerData$Month_new=as.numeric(substr(CustomerData$Month,1,1))
-## Revenue
+# Clacualte the Revenue
 SalesData$Revenue=(Endmonth-SalesData$Deal_month+1)*SalesData$MRR
 
-## Categorize CompanySize CustomerData
-# CustomerData$CompanySize[CustomerData$Employees %in% c("2 to 5","1","2", "4","5")]<-"1 to 5"
-# CustomerData$CompanySize[CustomerData$Employees %in% c("9","10",'16','18','25','11 to 25','6 to 10')]<-"6 to 25"
+# Categorize CompanySize in CustomerData dataset
 CustomerData$CompanySize[CustomerData$Employees %in% c("2 to 5","1","2", "4","5","9","10",'16','18','25','11 to 25','6 to 10')]<-"0 to 25"
 CustomerData$CompanySize[CustomerData$Employees %in% c("26 to 50")]<-"26 to 50"
 CustomerData$CompanySize[CustomerData$Employees %in% c("51 to 200")]<-"51 to 200"
 CustomerData$CompanySize[CustomerData$Employees %in% c("201 to 1000",'201 to 1,000')]<-"201 to 1000"
 CustomerData$CompanySize[CustomerData$Employees %in% c("1,001 to 10,000",'1001 to 10000','10,0001 or more')]<-"1000 or more"
 
-## Categorize CompanySize SalesData
+# Categorize CompanySize in SalesData dataset
 SalesData$CompanySize=SalesData$Employees
 SalesData$CompanySize[SalesData$Employees %in% c("Undefined")]<-NA
 SalesData$CompanySize[SalesData$Employees %in% c("201 to 500",'501 to 1000')]<-"201 to 1000"
 SalesData$CompanySize[SalesData$Employees %in% c('1001 or Above')]<-"1000 or more"
 
-
-## Categorize Industry CustomerData
+# Categorize Industry in CustomerData dataset
 CustomerData$Industry_New[CustomerData$Industry %in% c("Information Technology and Services","Information Services","Internet", "Computer & Network Security","Telecommunications",'Computer Software','Computer Hardware')]<-"IT, Computer Software & Hardware"
 CustomerData$Industry_New[CustomerData$Industry %in% c("Higher Education","Education Management","E-Learning", "Professional Training & Coaching","Primary/Secondary Education",'Printing','Writing and Editing','Translation and Localization')]<-"Education"
 CustomerData$Industry_New[CustomerData$Industry %in% c("Insurance","Venture Capital & Private Equity",'Investment Management', "Accounting","Primary/Secondary Education",'Printing','Writing and Editing','Translation and Localization')]<-"Financial Services"
@@ -59,7 +58,7 @@ CustomerData$Industry_New[CustomerData$Industry %in% c("Medical Devices","Health
 CustomerData$Industry_New[CustomerData$Industry %in% c("Electrical/Electronic Manufacturing",'Consumer Electronics', "Semiconductors","Machinery",'Automotive','Mechanical or Industrial Engineering','Industrial Automation','Aviation & Aerospace')]<-"Electronic Manufacturing & Machinery"
 CustomerData$Industry_New[CustomerData$Industry %in% c("Facilities Services",'Civic & Social Organization', "Utilities","Environmental Services",'Individual & Family Services','Testing Laboratories','Renewables & Environment')]<-"Social Services"
 
-## Categorize Industry SalesData
+# Categorize Industry in SalesData dataset
 SalesData$Industry_New[SalesData$Industry %in% c("Information Technology and Services","Information Services","Internet", "Computer & Network Security","Telecommunications",'Computer Software','Computer Hardware')]<-"IT, Computer Software & Hardware"
 SalesData$Industry_New[SalesData$Industry %in% c("Higher Education","Education Management","E-Learning", "Professional Training & Coaching","Primary/Secondary Education",'Printing','Writing and Editing','Translation and Localization')]<-"Education"
 SalesData$Industry_New[SalesData$Industry %in% c("Insurance","Venture Capital & Private Equity",'Investment Management', "Accounting","Primary/Secondary Education",'Printing','Writing and Editing','Translation and Localization')]<-"Financial Services"
@@ -72,18 +71,14 @@ SalesData$Industry_New[SalesData$Industry %in% c("Medical Devices","Health, Well
 SalesData$Industry_New[SalesData$Industry %in% c("Electrical/Electronic Manufacturing",'Consumer Electronics', "Semiconductors","Machinery",'Automotive','Mechanical or Industrial Engineering','Industrial Automation','Aviation & Aerospace')]<-"Electronic Manufacturing & Machinery"
 SalesData$Industry_New[SalesData$Industry %in% c("Facilities Services",'Civic & Social Organization', "Utilities","Environmental Services",'Individual & Family Services','Testing Laboratories','Renewables & Environment')]<-"Social Services"
 
-####----------------------------------------------------------------------------------------------------------
-## NA imputation
+# NA imputation
 library(DMwR)
 # CustomerData2=knnImputation(CustomerData, k = 5, scale = T, meth = "weighAvg", distData = NULL)
-
 CustomerData[Industry=='',]$Industry=NA
 CustomerData[Employees=='',]$Employees=NA
 CustomerData=centralImputation(CustomerData)
-
 # write.table(CustomerData,'CustomerData_New.csv',row.names=FALSE,col.names=TRUE,sep=",")
 # write.table(SalesData,'SalesData_New.csv',row.names=FALSE,col.names=TRUE,sep=",")
-####----------------------------------------------------------------------------------------------------------
 
 #r LTV:CAC ratio}
 
