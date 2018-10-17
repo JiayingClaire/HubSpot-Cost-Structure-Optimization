@@ -80,7 +80,7 @@ CustomerData=centralImputation(CustomerData)
 # write.table(CustomerData,'CustomerData_New.csv',row.names=FALSE,col.names=TRUE,sep=",")
 # write.table(SalesData,'SalesData_New.csv',row.names=FALSE,col.names=TRUE,sep=",")
 
-#r LTV:CAC ratio}
+#Calculate LTV:CAC ratio
 
 #Revenue Retetion Rate
 CustomerData$Retention_Rate=1-(CustomerData$`Ending Revenue`/CustomerData$`Starting Revenue`)^Endmonth
@@ -158,6 +158,7 @@ train$Country=as.factor(train$Country)
 train$CompanySize=as.factor(train$CompanySize)
 train$Month_new=as.numeric(train$Month_new)
 
+# Fit the models
 # Linear Regression
 LR.model <- lm(health_ratio~.,data= train)
 summary(LR.model) # show results
@@ -174,6 +175,7 @@ Tree.model=rpart(health_ratio~.,data= train,cp=0)
 summary(Tree.model)
 library(rattle)
 fancyRpartPlot(Tree.model)
+
 # Random Forest
 library(randomForest)
 RF.model=randomForest(health_ratio~.,data= train,ntree=200)
